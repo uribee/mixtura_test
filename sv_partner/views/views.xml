@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="partnersv_form" model="ir.ui.view">
+            <field name="name">partnersv_form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//field[@name='type']" position="before">
+                    <field name="nombres" attrs="{'invisible':[('company_type','!=','person')],'required':[('company_type','=','person')]}"/>
+                    <field name="apellidos" attrs="{'invisible':[('company_type','!=','person')],'required':[('company_type','=','person')]}"/>
+                </xpath>
+                <xpath expr="//field[@name='vat']" position="after">
+                    <field name="dui" attrs="{'invisible':[('company_type','!=','person')],'required':[('company_type','=','person')]}"/>
+                    <field name="nit" required="1"/>
+                    <field name="nrc"/>
+                    <field name="giro"/>
+                </xpath>
+                
+                <xpath expr="//page[@name='contact_addresses']" position="after">
+                    <page string="Referencias">
+                        <field name="referencia_ids">
+                            <tree editable="buttom">
+                                <field name="name"/>
+                                <field name="telefono"/>
+                                <field name="email"/>
+                                <field name="comentario"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+
+        <record id="partnersv_search" model="ir.ui.view">
+            <field name="name">partnersv_search</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//field[@name='user_id']" position="after">
+                    <field name="nit"/>
+                    <field name="nrc"/>
+                    <field name="dui"/>
+                </xpath>
+                
+            </field>
+        </record>
+
+        <record id="accountmovesv_search" model="ir.ui.view">
+            <field name="name">accountmovesv_search</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="nit"/>
+                </xpath>
+                
+            </field>
+        </record>
+        
+    </data>
+</odoo>
