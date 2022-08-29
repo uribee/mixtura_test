@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <record model="ir.ui.view" id="odoosv_asset_category_form">
+            <field name="name">odoosv_asset_category_form</field>
+            <field name="model">odoosv.asset.category</field>
+            <field name="arch" type="xml">
+                <form string="Categoria de Activos">
+                    <sheet>
+                        <group>
+                            <field name="name" placeholder="Cateogria"/>
+                        </group>
+                    </sheet>
+                    <!--div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div-->
+                </form>
+            </field>
+        </record>
+
+        <!--tree del objetivo-->
+        <record model="ir.ui.view" id="odoosv_asset_category_tree">
+            <field name="name">odoosv_asset_category_tree</field>
+            <field name="model">odoosv.asset.category</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <!--action del objetivo-->
+        <record model="ir.actions.act_window" id="odoosv_odoosv_asset_category_action">
+            <field name="name">Categorias de Activos</field>
+            <field name="res_model">odoosv.asset.category</field>
+            <!--field name="view_type">form</field-->
+            <field name="view_mode">tree,form</field>
+            <field name="target">current</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">Rutas</p>
+            </field>
+        </record>
+
+        <!--menu del objetivo-->
+        <menuitem id="odoosv_asset_category_menu" parent="account.account_management_menu" name="Categorias de Activos" action="odoosv_odoosv_asset_category_action" sequence="9"/>
+
+
+    </data>
+</odoo>

@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="companysv_form" model="ir.ui.view">
+            <field name="name">companysv_form</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="base.view_company_form"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//page[@name='general_info']" position="after">
+                    <page string="Configuracion El Salvador">
+                        <group>
+                            <group>
+                                <button name="configurar" type="object" string="Configurar"/> 
+                                <button name="configurar_productos" type="object" string="Configurar Productos"/> 
+                            </group>
+                            <group>
+                                <button name="configurar_partners" type="object" string="Configurar Asociados"/> 
+                                <button name="configure_db" type="object" string="Configurar DB"/> 
+                            </group>
+                        </group>
+                        <group string="Cuentas">
+                            <field name="account_iva_consumidor_id"/>
+                            <field name="account_iva_contribuyente_id"/>
+                            <field name="account_iva_compras_id"/>
+                            <field name="account_retencion_id"/>
+                            <field name="account_perceccion_id"/>
+                            <field name="account_isr_id"/>
+                        </group>
+                        <group string="Impuestos">
+                            <field name="tax_iva_consumidor_id"/>
+                            <field name="tax_iva_contribuyente_id"/>
+                            <field name="tax_iva_compras_id"/>
+                            <field name="tax_retencion_id"/>
+                            <field name="tax_perceccion_id"/>
+                            <field name="tax_isr_id"/>
+                            <field name="tax_exento_compra_id"/>
+                            <field name="tax_exento_venta_id"/>
+                            <field name="tax_nosujeto_compra_id"/>
+                            <field name="tax_nosujeto_venta_id"/>
+                            <field name="tax_base_tangible_compra"/>
+                            <field name="tax_base_tangible_venta"/>
+                            <field name="tax_base_servicio_compra"/>
+                            <field name="tax_base_servicio_venta"/>
+                        </group>
+                        <group string="Grupos de Impuestos">
+                            <field name="tax_group_iva_id"/>
+                            <field name="tax_group_retencion_id"/>
+                            <field name="tax_group_persecion_id"/>
+                            <field name="tax_group_isr_id"/>
+                            <field name="tax_group_exento_id"/>
+                            <field name="tax_group_nosujeto_id"/>
+                        </group>
+                        <group string="Posiciones Fiscales">
+                            <field name="fiscal_position_no_contribuyente_id"/>
+                            <field name="fiscal_position_pyme_natural_id"/>
+                            <field name="fiscal_position_pyme_juridico_id"/>
+                            <field name="fiscal_position_grande_natural_id"/>
+                            <field name="fiscal_position_grande_juridico_id"/>
+                            <field name="fiscal_position_exento_id"/>
+                            <field name="fiscal_position_extrangero_id"/>
+                        </group>
+                        <group string="Otros">
+                            <field name="contador"/>
+                            <field name="dividir_facturas"/>
+                            <field name="lineas_factura" attrs="{'invisible':[('dividir_facturas','=',False)],'required':[('dividir_facturas','=',True)]}"/>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+
+        <record id="parnertfiscal_form2" model="ir.ui.view">
+            <field name="name">parnertfiscal_form2</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+            <data>
+                    <xpath expr="//page[@name='sales_purchases']" position="inside">
+                            <group string="Configuracion El Salvador">
+                                <field name="contribuyente"/>
+                                <field name="tipo_persona"/>
+                                <field name="tamanio_empresa"/>
+                                <field name="tipo_fiscal"/>
+                                <field name="tipo_localidad"/>
+                            </group>
+                    </xpath>
+                    <xpath expr="//field[@name='nit']" position="attributes">
+                            <attribute name="attrs">{'required':[('tipo_localidad','!=','NoDomiciliado')]}</attribute>
+                    </xpath>
+                </data>
+            </field>
+        </record>
+
+       
+
+
+
+        <record id="svaccount_form" model="ir.ui.view">
+            <field name="name">svaccount_form</field>
+            <field name="model">account.account</field>
+            <field name="inherit_id" ref="account.view_account_form"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//field[@name='group_id']" position="after">
+                    <field name="partner_requerido"/>
+                    <field name="analytic_requerido"/>
+                </xpath>
+            </field>
+        </record>
+
+
+        <record id="productofiscal_form" model="ir.ui.view">
+            <field name="name">productofiscal_form</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//page[@name='general_information']" position="inside">
+                        <group string="Configuracion El Salvador">
+                            <field name="fiscal_type"/>
+                            <field name="bloquear_costo"/>
+                        </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="docfiscal_move_form" model="ir.ui.view">
+            <field name="name">docfiscal_move_form</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//field[@name='invoice_vendor_bill_id']" position="after">
+                        <field name="numeracion_automatica" invisible="1"/>
+                        <field name="requiere_poliza" invisible="1"/>                        
+                        <field name="tipo_documento_id" domain="[('tipo_movimiento','=',move_type)]"/>
+                        <field name="doc_numero" attrs="{'readonly':[('numeracion_automatica','=',True)]}"/>
+                        <field name="nofiscal"/>
+                        <field name="razon_notacredito_id" attrs="{'invisible':[('move_type','in',('in_invoice','out_invoice','entry'))]}"/>
+                        <field name="poliza" attrs="{'invisible':[('requiere_poliza','=',False)]}"/>
+                </xpath>
+                
+            </field>
+        </record>
+
+        <record id="docfiscal_move_search" model="ir.ui.view">
+            <field name="name">docfiscal_move_search</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//field[@name='date']" position="after">
+                    <field name="line_ids" string="Product" filter_domain="[('line_ids.product_id', 'ilike', self)]"/>
+                    <field name="tipo_documento_id"/>
+                </xpath>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="odoosv_account_journal_payment_ref_reg_form">
+            <field name="inherit_id" ref="account.view_account_payment_register_form"/>
+            <field name="name">odoosv_account_journal_payment_ref_reg_form</field>
+            <field name="model">account.payment.register</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='payment_method_line_id']" position="after">
+                    <field name="payment_reference" />
+                
+                </xpath>
+            </field>
+        </record>
+        
+
+        <!--<record id="odoosv_stock_inventory_line" model="ir.ui.view">
+            <field name="name">odoosv_stock_inventory_line</field>
+            <field name="model">stock.quant</field>
+            <field name="inherit_id" ref="stock.view_stock_quant_tree_inventory_editable"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//field[@name='inventory_diff_quantity']" position="after">
+                    <field name="razon_id"/>
+                </xpath>
+            </field>
+        </record>-->
+
+        <record id="odoosv_journal_form" model="ir.ui.view">
+            <field name="name">odoosv_journal_form</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.view_account_journal_form"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//field[@name='type']" position="after">
+                    <field name="sv_sequence_id" ></field>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

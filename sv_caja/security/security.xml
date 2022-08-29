@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record model="res.groups" id="odoosv_vendedor_caja">
+            <field name="name">Vendedor</field>
+        </record>
+        <record model="res.groups" id="odoosv_facturador_caja">
+            <field name="name">Facturador</field>
+        </record>
+        <record model="res.groups" id="odoosv_administrador_caja">
+            <field name="name">Administrador Cajas</field>
+        </record>
+        <record model="res.groups" id="odoosv_cambia_caja">
+            <field name="name">Puede Cambiar Caja</field>
+        </record>
+        <record id="vendedor_pos_rule" model="ir.rule">
+            <field name="name">Filtra cajas con pos por cta analítica</field>
+            <field name="model_id" ref="model_pos_config"></field>
+            <field name="domain_force">[('analytic_account_id','=',user.caja_id.analytic_account_id.id)]</field>
+            <field name="groups" eval="[(4,ref('odoosv_vendedor_caja'))]"></field>
+        </record>
+        <record id="diarios_caja_rule" model="ir.rule">
+            <field name="name">Filtra diarios por sucursal</field>
+            <field name="model_id" ref="model_account_journal"></field>
+            <field name="domain_force">['|',('caja_id','=',user.caja_id.id),('caja_id','=',False)]</field>
+            <field name="groups" eval="[(4,ref('odoosv_facturador_caja'))]"></field>
+        </record>
+    </data>
+</odoo>

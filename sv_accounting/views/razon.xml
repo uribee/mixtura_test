@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <record model="ir.ui.view" id="odoosv_razon_form">
+            <field name="name">odoosv_razon_form</field>
+            <field name="model">odoosv.razon_notacredito</field>
+            <field name="arch" type="xml">
+                <form string="Razones de las nota de credito">
+                    <sheet>
+                        <group>
+                            <field name="name" placeholder="Razon"/>
+                        </group>
+                    </sheet>
+                    <!--div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div-->
+                </form>
+            </field>
+        </record>
+
+        <!--tree del objetivo-->
+        <record model="ir.ui.view" id="odoosv_razon_tree">
+            <field name="name">odoosv_razon_tree</field>
+            <field name="model">odoosv.razon_notacredito</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <!--action del objetivo-->
+        <record model="ir.actions.act_window" id="odoosv_razon_action">
+            <field name="name">Razones de notas de credito</field>
+            <field name="res_model">odoosv.razon_notacredito</field>
+            <!--field name="view_type">form</field-->
+            <field name="view_mode">tree,form</field>
+            <field name="target">current</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">Razones de nota de credito</p>
+            </field>
+        </record>
+
+        <!--menu del objetivo-->
+        <menuitem id="odoosv_razon_menu" parent="account.menu_finance_configuration" name="Razones de nota de credito" action="odoosv_razon_action" sequence="9"/>
+
+       
+
+    </data>
+</odoo>

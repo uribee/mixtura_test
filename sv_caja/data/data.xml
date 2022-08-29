@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <record id="detallar_facturas" model="ir.config_parameter">
+        <field name="key">detallar_facturas</field>
+        <field name="value">0</field>
+    </record>
+
+    <record id="detallar_pagos" model="ir.config_parameter">
+        <field name="key">detallar_pagos</field>
+        <field name="value">0</field>
+    </record>
+
+   
+</odoo>

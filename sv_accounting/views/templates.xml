@@ -1,0 +1,284 @@
+<odoo>
+    <data>
+
+      <report
+      id="partida_report"
+      string="Partida"
+      model="account.move"
+      report_type="qweb-pdf"
+      file="sv_accounting.partida"
+      name="sv_accounting.partida"
+      menu="True"/>
+
+ 
+
+   
+
+  <template id="partida">
+      <t t-call="web.html_container">
+          <t t-foreach="docs" t-as="doc">
+              <t t-call="sv_accounting.partida_document" t-lang="doc.partner_id.lang"/>
+          </t>
+      </t>
+  </template>
+
+   
+  <template id="partida_document">
+      <t t-name="sv_accounting.partida_document">
+      <t t-call="web.internal_layout">
+          <t t-set="doc" t-value="doc.with_context(lang=doc.partner_id.lang)"/>
+          <div class="page">
+            
+            <table class="table">
+              <tr>
+                <td class="text-center">
+                  <span t-field="doc.company_id.name"/>
+                  <br></br>
+                  <span>PARTIDA DE DIARIO</span>
+                </td>
+              </tr>
+            </table>
+
+            <table>
+              <tr>
+                <td><span>Número:</span><span t-field="doc.name"></span></td>
+              </tr><tr>
+                <td><span>Fecha:</span><span t-field="doc.date"></span></td>
+              </tr>
+              <tr>
+                <td><span>Tipo:</span><span t-field="doc.journal_id"></span></td>
+                </tr><tr>
+                <td><span>Concepto:</span><span t-field="doc.ref"></span></td>
+              </tr>
+            </table>
+            <div class="row" style="border-top:thin solid black; text-align:center;">
+            </div>
+             <table class="table table-sm">
+              <thead>
+                  <tr>
+                      <th colspan="2"><strong>Cuenta Contable</strong></th>
+                      <th colspan="1"><strong>Centro de Costo</strong></th>
+                      <th colspan="1"><strong>Concepto</strong></th>
+                      <th colspan="1"><strong>Debe</strong></th>
+                      <th colspan="1"><strong>Haber</strong></th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <t t-set="debe" t-value="0"/>
+                  <t t-set="haber" t-value="0"/>
+                  <tr t-foreach="doc.line_ids" t-as="l">
+                      <td><span t-field="l.account_id.code"/></td>
+                      <td><span t-field="l.account_id.name"/></td>
+                      <td><span t-field="l.analytic_account_id.name"/></td>
+                      <td><span t-field="l.name"/></td>
+                      <td class="text-right"><span t-field="l.debit"/></td>
+                      <td class="text-right"><span t-field="l.credit"/></td>
+                      <t t-set="debe" t-value="debe+l.debit"/>
+                      <t t-set="haber" t-value="haber+l.credit"/>
+                  </tr>
+                  <tr>
+                    <td colspan="4"></td>
+                    <td class="text-right">$<span style="border-top:double solid black;" t-esc="debe"></span></td>
+                    <td class="text-right">$<span style="border-top:double solid black;" t-esc="haber"></span></td>
+                  </tr>
+              </tbody>
+          </table>
+          <div class="footer">
+              <div class="row">
+                <table style="width:100%;">
+                  <tr>
+                    <td class="text-center" style="border-top:thin solid black; width:30%;"><span>Hecho Por</span></td>
+                    <td style="width:5%"></td>
+                    <td class="text-center" style="border-top:thin solid black; width:30%; "><span>Revisado Por</span></td>
+                    <td style="width:5%"></td>
+                    <td class="text-center" style="border-top:thin solid black; width:30%; "><span>Autorizado Por</span></td>
+                  </tr>
+                </table>
+                
+              </div>
+            </div>
+          </div>  
+      </t>
+      </t>
+
+
+  </template>
+
+
+
+
+
+  <report
+  id="voucher_report"
+  string="Voucher"
+  model="account.payment"
+  report_type="qweb-pdf"
+  file="sv_accounting.voucher"
+  name="sv_accounting.voucher"
+  menu="True"/>
+
+
+
+
+
+<template id="voucher">
+  <t t-call="web.html_container">
+      <t t-foreach="docs" t-as="doc">
+          <t t-call="sv_accounting.voucher_document" t-lang="doc.partner_id.lang"/>
+      </t>
+  </t>
+</template>
+
+
+<template id="voucher_document">
+  <t t-name="sv_accounting.voucher_document">
+  <t t-call="web.internal_layout">
+      <t t-set="doc" t-value="doc.with_context(lang=doc.partner_id.lang)"/>
+      <div class="page">
+        
+        <table class="" style="width:100%">
+          <tr>
+            <td colspan="2">
+              <span t-field="doc.company_id.city"/>,<span t-field="doc.date" t-field-options="{'format': 'yyyy-MM-dd'}" />
+            </td>
+            <td colspan="1">
+              <b><span t-field="doc.amount"/></b>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="3">
+               <b><span t-if="doc.a_nombre_de" t-field="doc.a_nombre_de"/><span t-if="doc.a_nombre_de==False" t-field="doc.partner_id.name"/></b>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="3">
+               <b><span t-field="doc.check_amount_in_words"/></b>
+            </td>
+          </tr>
+        </table>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+
+        <table class="" style="width:100%">
+          <tr>
+            <td>
+              <span></span>
+              <span t-field="doc.company_id.name"/>
+            </td>
+            <td>
+              <span></span>
+              <span></span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span>Fecha:</span>
+              <span t-field="doc.date"/>
+            </td>
+            <td>
+              <span>Monto:</span>
+              <span t-field="doc.amount"></span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span>A favor de :</span>
+              <span t-if="doc.a_nombre_de" t-field="doc.a_nombre_de"/><span t-if="doc.a_nombre_de==False" t-field="doc.partner_id.name"/>
+            </td>
+            <td>
+              <span>No. Cheque:</span>
+              <span t-field="doc.check_number"></span>
+            </td>
+          </tr>
+           <tr>
+            <td colspan="2">
+              <span>A favor de :</span>
+              <span t-if="doc.a_nombre_de" t-field="doc.a_nombre_de"/><span t-if="doc.a_nombre_de==False" t-field="doc.partner_id.name"/>
+            </td>
+           
+          </tr>
+          <tr>
+             <td>
+              <span>No. Partida:</span>
+              <span t-field="doc.move_id.name"></span>
+            </td>
+             <td>
+              <span>No. Cheque:</span>
+              <span t-field="doc.check_number"></span>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2"><span>Concepto:</span><span t-field="doc.ref"/></td>
+            </tr><tr>
+          </tr>
+        </table>
+        
+        
+        
+        <div class="row" style="border-top:thin solid black; text-align:center;">
+        </div>
+         <table class="table table-sm">
+          <thead>
+              <tr>
+                  <th colspan="2"><strong>Cuenta Contable</strong></th>
+                  <th colspan="1"><strong>Centro de Costo</strong></th>
+                  <th colspan="1"><strong>Concepto</strong></th>
+                  <th colspan="1"><strong>Debe</strong></th>
+                  <th colspan="1"><strong>Haber</strong></th>
+              </tr>
+          </thead>
+          <tbody>
+              <t t-set="debe" t-value="0"/>
+              <t t-set="haber" t-value="0"/>
+              <tr t-foreach="doc.move_id.line_ids" t-as="l">
+                  <td><span t-field="l.account_id.code"/></td>
+                  <td><span t-field="l.account_id.name"/></td>
+                  <td><span t-field="l.analytic_account_id.name"/></td>
+                  <td><span t-field="l.name"/></td>
+                  <td class="text-right"><span t-field="l.debit"/></td>
+                  <td class="text-right"><span t-field="l.credit"/></td>
+                  <t t-set="debe" t-value="debe+l.debit"/>
+                  <t t-set="haber" t-value="haber+l.credit"/>
+              </tr>
+              <tr>
+                <td colspan="4"/>
+                <td class="text-right">$<span style="border-top:double solid black;" t-esc="debe"/></td>
+                <td class="text-right">$<span style="border-top:double solid black;" t-esc="haber"/></td>
+              </tr>
+          </tbody>
+      </table>
+      <div class="footer">
+          <div class="row">
+            <table style="width:100%;">
+              <tr>
+                <td class="text-center" style="border-top:thin solid black; width:20%;"><span>Hecho Por</span></td>
+                <td style="width:5%"/>
+                <td class="text-center" style="border-top:thin solid black; width:20%; "><span>Revisado Por</span></td>
+                <td style="width:5%"/>
+                <td class="text-center" style="border-top:thin solid black; width:20%; "><span>Autorizado Por</span></td>
+                <td style="width:5%"/>
+                <td class="text-center" style="border-top:thin solid black; width:20%; "><span>Recibido Por</span></td>
+              </tr>
+            </table>
+            
+          </div>
+        </div>
+      </div>  
+  </t>
+  </t>
+
+
+</template>
+
+
+
+
+
+    </data>
+</odoo>

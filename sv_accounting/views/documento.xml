@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <record model="ir.ui.view" id="odoosv_fiscal_document_form">
+            <field name="name">odoosv_fiscal_document_form</field>
+            <field name="model">odoosv.fiscal.document</field>
+            <field name="arch" type="xml">
+                <form string="Documentos Fiscales">
+                    <sheet>
+                        <group>
+                            <field name="name" placeholder="Documento"/>
+                            <field name="formato"/>
+                            <field name="tipo_movimiento"/>
+                            <field name="validacion" />
+                            <field name="numeracion_automatica"/>
+                            <field name="sv_sequence_id" attrs="{'required':[('numeracion_automatica','=',True)]}"/>
+                            <field name="contribuyente"/>
+                            <field name="requiere_poliza"/>
+                            <field name="codigo"/>
+                        </group>
+                    </sheet>
+                    <!--div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div-->
+                </form>
+            </field>
+        </record>
+
+        <!--tree del objetivo-->
+        <record model="ir.ui.view" id="odoosv_fiscal_document_tree">
+            <field name="name">odoosv_fiscal_document_tree</field>
+            <field name="model">odoosv.fiscal.document</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name" placeholder="Documento"/>
+                    <field name="formato"/>
+                    <field name="tipo_movimiento"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <!--action del objetivo-->
+        <record model="ir.actions.act_window" id="odoosv_fiscal_document_action">
+            <field name="name">Documentos Fiscales</field>
+            <field name="res_model">odoosv.fiscal.document</field>
+            <!--field name="view_type">form</field-->
+            <field name="view_mode">tree,form</field>
+            <field name="target">current</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">Documentos fiscales</p>
+            </field>
+        </record>
+
+        <!--menu del objetivo-->
+        <menuitem id="odoosv_fiscal_document_menu" parent="account.menu_finance_configuration" name="Documentos Fiscales" action="odoosv_fiscal_document_action" sequence="9"/>
+
+
+    </data>
+</odoo>

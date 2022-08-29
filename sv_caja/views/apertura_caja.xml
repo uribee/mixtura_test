@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record model="ir.ui.view" id="apertura_caja_form">
+        <field name="name">apertura_caja_form</field>
+        <field name="model">odoosv.apertura.caja</field>
+        <field name="arch" type="xml">
+            <form string="Apertura Caja">
+                <sheet>
+                    <div class="oe_title oe_inline">
+                        <label for="name" class="oe_edit_only" />
+                        <h1>
+                            <field name="name" required="1" />
+                        </h1>
+                    </div>
+                    <group>
+                        <field name="create_uid" string="Responsable" />
+                        <field name="fecha_apertura" />
+                        <field name="able_to_modify_caja" invisible= '1'/>
+                        <field name="caja_id" attrs="{'readonly':[('able_to_modify_caja','=',False)]}" />
+                        <field name="total" />
+                    </group>
+                    <field name="line_ids">
+                        <tree editable="top">
+                            <field name="billete_moneda_id" />
+                            <field name="cantidad" />
+                            <field name="valor" />
+                        </tree>
+
+                    </field>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers" groups="base.group_user" />
+                    <field name="message_ids" widget="mail_thread" />
+                </div>
+            </form>
+        </field>
+    </record>
+
+
+    <!--tree del pei-->
+    <record model="ir.ui.view" id="odoosv_apertura_tree">
+        <field name="name">odoosv_apertura_tree</field>
+        <field name="model">odoosv.apertura.caja</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" placeholder="Documento" />
+                <field name="fecha_apertura" />
+                <field name="caja_id" />
+                <field name="total" />
+            </tree>
+        </field>
+    </record>
+
+
+    <!--action del pei-->
+    <record model="ir.actions.act_window" id="apertura_caja_action">
+        <field name="name">Apertura de Caja</field>
+        <field name="res_model">odoosv.apertura.caja</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">Aperturar Caja
+                    </p>
+        </field>
+    </record>
+
+    <!--menu del pei-->
+    <menuitem id="odoosv_apertura_caja" parent="account.menu_finance_receivables" name="Aperturar Caja" action="apertura_caja_action" sequence="1" />
+
+    <record id="odoosv_account_analytic" model="ir.ui.view">
+        <field name="name">odoosv_account_analytic</field>
+        <field name="model">pos.config</field>
+        <field name="inherit_id" ref="point_of_sale.pos_config_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//div[4]" position="after">
+                <h2>Centro de costos por cuenta analítica </h2>
+                <div class="col-12 col-lg-6 o_setting_box">
+                    <div class="o_setting_right_pane">
+                        <label for="analytic_account_id" />
+                        <div class="text-muted">
+                                    Seleccione cuenta analítica según sucursal, esta selección filtrará los pedidos de punto de ventas según cajas de venta.
+                                </div>
+                        <div class="content-group mt16">
+                            <field name="analytic_account_id" />
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

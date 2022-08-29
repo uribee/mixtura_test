@@ -1,0 +1,49 @@
+<odoo>
+    <data>
+      <record model="ir.ui.view" id="odoosv_caja_form_pos">
+        <field name="name">odoosv_caja_form_pos</field>
+        <field name="model">odoosv.caja</field>
+        <field name="inherit_id" ref="sv_caja.odoosv_caja_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='footer']" position="after">
+              <field name="pos_config_id" />
+            </xpath>
+        </field>
+     </record>
+    
+    
+    
+  
+  
+  
+      <record model="ir.ui.view" id="cierre_form_pos">
+      <field name="name">cierre_form_pos</field>
+      <field name="model">odoosv.cierre</field>
+      <field name="inherit_id" ref="sv_caja.cierre_form"/>
+      <field name="arch" type="xml">
+            <xpath expr="//field[@name='factura_ids']" position="after">
+              <field name="pos_order_ids" />
+            </xpath>
+            <xpath expr="//field[@name='pago_ids']" position="after">
+              <field name="pos_payment_ids" />
+            </xpath>
+          
+          
+  
+  
+  
+  
+  
+      </field>
+   </record>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    </data>
+  </odoo>

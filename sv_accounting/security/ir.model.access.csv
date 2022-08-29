@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+odoosv_documento,odoosv_documento,model_odoosv_fiscal_document,base.group_user,1,0,0,0
+odoosv_documento1,odoosv_documento1,model_odoosv_fiscal_document,sales_team.group_sale_manager,1,1,1,1
+odoosv_razon,odoosv_razon,model_odoosv_razon_notacredito,base.group_user,1,0,0,0
+odoosv_razon1,odoosv_razon1,model_odoosv_razon_notacredito,sales_team.group_sale_manager,1,1,1,1

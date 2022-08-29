@@ -1,0 +1,884 @@
+<odoo>
+    <data>
+      <record model="ir.ui.view" id="odoosv_caja_form">
+        <field name="name">odoosv_caja_form</field>
+        <field name="model">odoosv.caja</field>
+        <field name="arch" type="xml">
+            <form string="caja">
+                <sheet>
+                    <div class="oe_title oe_inline">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name" required="1"/>
+                        </h1>
+                    </div> 
+                    <group>
+                        <field name="warehouse_id" />
+                        <field name="location_id" />
+                        <field name="picking_type_id" />
+                        <field name="analytic_account_id" />
+                        <field name="header" widget="html"/>
+                        <field name="footer" widget="html"/>
+                    </group>
+                    <!--field name="serie_ids">
+                      <tree editable="top">
+                        <field name="name" />
+                        <field name="serie" />
+                        <field name="tipo_documento_id" />
+                        <field name="sv_sequence_id" />
+                      </tree>
+  
+                    </field-->
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+     </record>
+    
+    
+    <!--tree del pei-->
+     <record model="ir.ui.view" id="odoosv_caja_tree">
+        <field name="name">odoosv_caja_tree</field>
+        <field name="model">odoosv.caja</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" placeholder="Documento"/>
+                <field name="warehouse_id" />
+                <field name="location_id" />
+                <field name="picking_type_id" />
+                <field name="analytic_account_id" />
+            </tree>
+        </field>
+     </record>
+    
+    
+    <!--action del pei-->
+        <record model="ir.actions.act_window" id="caja_action">
+                <field name="name">Creación de cajas facturadoras</field>
+                <field name="res_model">odoosv.caja</field>
+                <field name="view_mode">tree,form</field>
+                <field name="help" type="html">
+                    <p class="oe_view_nocontent_create">Listado de cajas facturadoras
+                    </p>
+                </field>
+            </record>
+    
+    <!--menu del pei-->
+       <menuitem id="odoosv_caja" parent="account.account_invoicing_menu" name="Cajas facturadoras" action="caja_action" sequence="4"/> 
+    
+       <record model="ir.actions.act_window" id="cierre_action">
+        <field name="name">Cierre de Caja</field>
+        <field name="res_model">odoosv.cierre</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">Cierre
+            </p>
+        </field>
+    </record>
+    <menuitem 
+    id="odoosv_cierre" 
+    parent="account.menu_finance_receivables"
+    name="Cierre de caja"
+    action="cierre_action"
+    sequence="1"
+    />
+  
+  
+  
+  
+       <!-- Cirree  -->
+  
+       <!--tree del pei-->
+     <record model="ir.ui.view" id="cierre_tree">
+      <field name="name">cierre_tree</field>
+      <field name="model">odoosv.cierre</field>
+      <field name="arch" type="xml">
+          <tree>
+              <field name="name" />
+              <field name="create_uid" string="Responsable" />
+              <field name="fecha_cierre" />
+              <field name="caja_id" />
+          </tree>
+      </field>
+   </record>
+  
+  
+  
+      <record model="ir.ui.view" id="cierre_form">
+      <field name="name">cierre_form</field>
+      <field name="model">odoosv.cierre</field>
+      <field name="arch" type="xml">
+          
+          <form>
+              <header>
+                        <button name="calcular" string="Calcular" type="object" class="oe_highlight" attrs="{'invisible':[('estado', '=', 'Cerrado')]}"/>
+                        <button name="liberar" string="Liberar" type="object" class="oe_highlight" attrs="{'invisible':[('estado', '=', 'Cerrado')]}"/>
+                        <button name="cerrar" string="Cerrar" type="object" class="oe_highlight" attrs="{'invisible':[('estado', '=', 'Cerrado')]}"/>
+                        <field name="estado" widget="statusbar"/>
+                      </header>
+                       <sheet>
+                           <div class="oe_title oe_inline">
+                               <label for="name" class="oe_edit_only"/>
+                               <h1><field name="name"/></h1>
+                           </div>
+                           <group>
+                                  <field name="create_uid" string="Responsable" />
+                                   <field name="fecha_cierre" />
+                                   <field name="able_to_modify_caja" invisible= '1'/>
+                                   <field name="caja_id" attrs="{'readonly':[('able_to_modify_caja','=',False)]}" />
+                                   <field name="line_ids">
+                                    <tree editable="top">
+                                        <field name="billete_moneda_id" />
+                                        <field name="cantidad" />
+                                        <field name="valor" />
+                                    </tree>
+            
+                                </field>
+
+                                    <field name="documento_ids"  readonly="1">
+                                     <tree>
+                                       <field name="name" />
+                                       <field name="min_doc" />
+                                       <field name="max_doc" />
+                                       <field name="cantidad" />
+                                     </tree>
+                                   </field>
+                                   <field name="factura_ids"  readonly="1">
+                                     <tree>
+                                        <field name="name"/>
+                                        <field name="partner_id" string="Cliente"/>
+                                        <field name="invoice_source_email" invisible="1"/>
+                                        <field name="tipo_documento_id" optional="show" />
+                                        <field name="doc_numero" />
+                                        <field name="invoice_user_id" optional="show" invisible="context.get('default_type') not in ('out_invoice', 'out_refund','out_receipt')" string="Sales Person"/>
+                                        <field name="invoice_date" optional="show"/>
+                                        <field name="amount_untaxed_signed" string="Tax Excluded" sum="Total" optional="show"/>
+                                        <field name="amount_tax_signed" string="Tax" sum="Total" optional="hide"/>
+                                        <field name="amount_total_signed" string="Total" sum="Total" optional="show"/>
+                                        <field name="amount_residual_signed" string="Amount Due" sum="Amount Due" optional="show"/>
+                                        <field name="currency_id" invisible="1"/>
+                                        <field name="company_currency_id" invisible="1"/>
+                                        <field name="state" optional="show"/>
+                                        <field name="payment_state" optional="hide"/>
+                                        <field name="move_type" invisible="context.get('default_type', True)"/>
+                                     </tree>
+                                  </field>
+                                   <field name="pago_ids"  readonly="1">
+                                     <tree decoration-danger="payment_type=='outbound'">
+                                       <field name="date" />
+                                       <field name="name" />
+                                       <field name="journal_id" />
+                                       <field name="amount" />
+                                       <field name="facturas" />
+                                       <field name="state" />
+                                       <field name="currency_id" />
+                                       <field name="payment_type" />
+                                     </tree>
+                                   </field>
+                                   <field name="cierrepago_ids" readonly="1">
+                                     <tree string="Metodos de pago">
+                                       <field name="name" />
+                                       <field name="monto" />
+                                    </tree>
+                                   </field>
+                                   <field name="remesa_ids" readonly="1">
+                                     <tree string="Remesas">
+                                       <field name="origen_id" />
+                                       <field name="destino_id" />
+                                       <field name="monto" />
+                                    </tree>
+                                   </field>
+                                   <group string="Efectivo">
+                                      <field name="apertura_id" readonly="1"/>
+                                      <field name="efectivo_inicial" readonly="1"/>
+                                      <field name="efectivo_ingresado" readonly="1"/>
+                                      <field name="efectivo_egresado" readonly="1"/>
+                                      <field name="efectivo_final" readonly="1"/>
+                                      <field name="efectivo_diferencia" readonly="1"/>
+                                   </group>
+                           </group>
+              
+                       </sheet>
+                       </form>
+  
+  
+  
+  
+  
+      </field>
+   </record>
+  
+  
+  
+  
+    <record id="odoosv_user_form" model="ir.ui.view">
+      <field name="name">odoosv_user_form</field>
+      <field name="model">res.users</field>
+      <field name="inherit_id" ref="base.view_users_form" />
+      <field name="arch" type="xml">
+        <xpath expr="//notebook" position="before">
+          <group>
+            <field name="caja_id" string='Sucursal'/>
+        </group>
+        </xpath>
+      </field>
+    </record>
+  
+  
+    <record id="odoosv_sale_form" model="ir.ui.view">
+      <field name="name">odoosv_sale_form</field>
+      <field name="model">sale.order</field>
+      <field name="inherit_id" ref="sale.view_order_form" />
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='payment_term_id']" position="after">
+          <field name="able_to_modify_caja" invisible= '1'/>
+          <field name="caja_id" string='Caja' attrs="{'readonly':[('able_to_modify_caja','=',False)]}"/>
+        </xpath>
+      </field>
+    </record>
+  
+  
+    <record id="odoosv_move_form" model="ir.ui.view">
+      <field name="name">odoosv_move_form</field>
+      <field name="model">account.move</field>
+      <field name="inherit_id" ref="account.view_move_form" />
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='invoice_date']" position="after">
+          <field name="able_to_modify_caja" invisible="1"/>
+          <field name="caja_id" string='Caja'/>
+        </xpath>
+        <xpath expr="//field[@name='tipo_documento_id']" position="attributes">
+          <attribute name="domain" invisible="1">[('tipo_movimiento','=',move_type),'|',('caja_id','=',caja_id),('caja_id','=',"False")]</attribute>
+        </xpath>
+      </field>
+    </record>
+
+
+    <record id="odoosv_payment_form" model="ir.ui.view">
+      <field name="name">odoosv_payment_form</field>
+      <field name="model">account.payment</field>
+      <field name="inherit_id" ref="account.view_account_payment_form" />
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='ref']" position="after">
+          <field name="able_to_modify_caja" invisible="1"/>
+          <field name="caja_id" string='Caja' attrs="{'readonly':[('able_to_modify_caja','=',False)]}"/>
+        </xpath>
+      </field>
+    </record>
+  
+  
+  
+  
+    <report
+    id="evaluacion_report"
+    string="Reporte de Cierre"
+    model="odoosv.cierre"
+    report_type="qweb-pdf"
+    file="sv_caja.template_cierre_report"
+    name="sv_caja.template_cierre_report"
+    menu="True"/>
+    
+  
+  
+    <template id="template_cierre_report">
+      <t t-call="web.html_container">
+          <t t-foreach="docs" t-as="doc">
+  
+      <t t-call="web.external_layout">
+          <div class="page">
+              <!--<div class="oe_structure"/>-->
+              <div class="row" style="border-bottom:thin solid #ffffff;margin-bottom:5px;">
+                <div class="col-6" style="border-right:thin solid #ffffff;margin-bottom:5px;">
+                  <h2>Reporte de Cierre</h2>
+                </div>
+                <div class="col-6">
+                  <table style="text-align:right;width:100%">
+                    <tr>
+                      <td>
+                        <span>Fecha :</span>
+                        <strong><p class="m-0" t-field="doc.fecha_cierre" t-options="{'widget': 'date'}"/></strong><p/>
+                      </td>
+                      <td>
+                        <span>caja :</span>
+                        <strong><p class="m-0" t-field="doc.caja_id" /></strong><p/>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+
+
+
+            <t t-set="detallar_facturas" t-value="request.env['ir.config_parameter'].sudo().get_param('detallar_facturas')"/>
+            <t t-set="detallar_pagos" t-value="request.env['ir.config_parameter'].sudo().get_param('detallar_pagos')"/>
+
+
+            <div style="width:100%;border-bottom:thin solid black">
+                <h3>Documentos</h3>
+            </div>
+            
+            <table class="table table-sm o_main_table" name="isnumos">
+                <thead>
+                    <tr style="background:gray">
+                      <td>Documento</td>
+                      <td>Inicial</td>
+                      <td>Final</td>
+                      <td>Cantidad</td>
+                    </tr>
+                </thead>
+                <tbody class="invoice_tbody">
+                    
+                    <t t-foreach="doc.documento_ids" t-as="d">                      
+                        <tr>
+                            <td><span t-field="d.name"/></td>
+                            <td><span t-field="d.min_doc"/></td>
+                            <td><span t-field="d.max_doc"/></td>
+                            <td><span t-field="d.cantidad"/></td>                            
+                        </tr>
+                    </t>
+                </tbody>
+            </table>
+               
+            
+
+          <div style="width:100%;border-bottom:thin solid black">
+              <h3>Arqueo</h3>
+          </div>
+          
+          <table class="table table-sm o_main_table" name="isnumos">
+              <thead>
+                  <tr style="background:gray">
+                    <td>Billete/Moneda</td>
+                    <td>Cantidad</td>
+                    <td>Valor</td>                    
+                  </tr>
+              </thead>
+              <tbody class="invoice_tbody">
+                  
+                  <t t-foreach="doc.line_ids" t-as="e">                      
+                      <tr>
+                          <td><span t-field="e.billete_moneda_id"/></td>
+                          <td><span t-field="e.cantidad"/></td>
+                          <td><span t-field="e.valor"/></td>
+                      </tr>
+                  </t>
+              </tbody>
+          </table>
+
+
+
+
+            
+            <div t-if="detallar_facturas!='0'" style="width:100%;border-bottom:thin solid black" >
+                                      <h3>Facturas</h3>
+                                  </div>
+                                  
+                                  <table t-if="detallar_facturas!='0'" class="table table-sm o_main_table" name="isnumos">
+                                      <thead>
+                                          <tr style="background:gray">
+                                          <td>Cliente</td>
+                                          <td>Fecha</td>
+                                          <td>Tipo</td>
+                                          <td># Fact.</td>
+                                          <td>Doc. Origen</td>
+                                          <td>Vendedor</td>
+                                          <td>Total sin Imp.</td>
+                                          <!--td>Impuestos</td-->
+                                          <td>Total</td>
+                                          </tr>
+                                      </thead>
+                                      <tbody class="invoice_tbody">
+                                          <t t-set="sin_impuestos" t-value="0"/>
+                                          <t t-set="impuestos" t-value="0"/>
+                                          <t t-set="total" t-value="0"/>
+                                          <t t-foreach="doc.factura_ids" t-as="i">
+                                              <t t-set="sin_impuestos" t-value="sin_impuestos + i.amount_untaxed"/>
+                                              <!--t t-set="impuestos" t-value="impuestos + (i.amount_total-i.amount_untaxed)"/-->
+                                              <t t-set="total" t-value="total + i.amount_total"/>
+                                              <tr>
+                                                  <td><span t-field="i.partner_id"/></td>
+                                                  <td><span t-field="i.invoice_date"/></td>
+                                                  <td><span t-field="i.tipo_documento_id"/></td>
+                                                  <td><span t-field="i.doc_numero"/></td>
+                                                  <td><span t-field="i.invoice_origin"/></td>
+                                                  <td><span t-field="i.user_id"/></td>
+                                                  <td class=" text-right"><span t-field="i.amount_untaxed" t-field-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: &quot;currency&quot;}"/></td>
+                                                  <!--td class=" text-right"><span t-field="(i.amount_total-i.amount_untaxed)" t-field-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: &quot;currency&quot;}"/></td-->
+                                                  <td class=" text-right"><span t-field="i.amount_total" t-field-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: &quot;currency&quot;}"/></td>
+                                              </tr>
+                                          </t>
+                                          <tr class="is-subtotal text-right" style="background:gray">
+                                                  <td colspan="6"><span>Total</span></td>
+                                                  <td><span t-esc="'%.2f'% sin_impuestos"/></td>
+                                                  <!--td><span t-esc="'%.2f'% impuestos"/></td-->
+                                                  <td><span t-esc="'%.2f'% total"/></td>
+                                              </tr>
+                                      </tbody>
+                                  </table>
+                                  
+  
+              
+  
+              <div t-if="detallar_pagos!='0'" id="informations" style="width:100%;border-bottom:thin solid black">
+                  <h3>Pagos</h3>
+              </div>
+  
+              <!-- Is there a discount on at least one line? -->
+  
+              <table t-if="detallar_pagos!='0'" class="table table-sm o_main_table">
+                  <thead>
+                      <tr>
+                          <th name="th_fechahora" class="text-left">Fecha</th>
+                          <th name="th_fechahora" class="text-left">Factura</th>
+                          <th name="th_cliente" class="text-left">Cliente</th>
+                          <th name="th_metodo" class="text-left">Forma</th>
+                          <th name="th_monto" class="text-left">Monto</th>
+                          
+                          
+                      </tr>
+                  </thead>
+                  <tbody class="sale_tbody">
+                    <t t-set="totalpagos" t-value="0"/>
+                      <t t-foreach="doc.pago_ids" t-as="line">
+                          <tr class="o_line_section" style="font-size:12px;color:#000000;">
+                              <td class="text-left"><span t-field="line.create_date"/></td>
+                              <td class="text-left"><span t-field="line.facturas"/></td>
+                              <td class="text-left"><span t-field="line.partner_id.name"/></td>
+                              <td class="text-left"><span t-field="line.journal_id.name"/></td>
+                              <td class="text-right"><span t-if="line.payment_type=='outbound'" >-</span><span t-field="line.amount"/></td>
+                              <t t-set="totalpagos" t-if="line.payment_type=='inbound'" t-value="totalpagos+line.amount"/>
+                              <t t-set="totalpagos" t-if="line.payment_type=='outbound'" t-value="totalpagos-line.amount"/>
+                          </tr>
+                      </t>
+
+                      <tr class="is-subtotal text-right" style="background:gray">
+                        <td colspan="4"><span>Total</span></td>
+                        <td><span t-esc="'%.2f'% totalpagos"/></td>
+                      </tr>
+
+                  </tbody>
+              </table>
+              
+              
+              <div  style="width:100%;border-bottom:thin solid black">
+                  <h3>Formas de Pago</h3>
+              </div>
+  
+              <!-- Is there a discount on at least one line? -->
+  
+              <table class="table table-sm o_main_table">
+                  <thead>
+                      <tr>
+                          <th name="th_forma" class="text-left">Forma de Pago</th>
+                          <th name="th_monto" class="text-right">Monto</th>
+                      </tr>
+                  </thead>
+                  <tbody class="sale_tbody">
+                      <t t-foreach="doc.cierrepago_ids" t-as="line">
+                          <tr class="o_line_section" style="font-size:12px;color:#000000;">
+                              <td class="text-left"><span t-field="line.name"/></td>
+                              <td class="text-right"><span t-field="line.monto"/></td>
+                          </tr>
+                      </t>
+                  </tbody>
+              </table>
+
+
+              <div  style="width:100%;border-bottom:thin solid black">
+                  <h3>Remesas</h3>
+              </div>
+    
+              <table class="table table-sm o_main_table">
+                  <thead>
+                      <tr>
+                          <th name="th_forma_o" class="text-left">Origen</th>
+                          <th name="th_forma_d" class="text-left">Destino</th>
+                          <th name="th_monto" class="text-right">Monto</th>
+                      </tr>
+                  </thead>
+                  <tbody class="sale_tbody">
+                      <t t-foreach="doc.remesa_ids" t-as="line">
+                          <tr class="o_line_section" style="font-size:12px;color:#000000;">
+                              <td class="text-left"><span t-field="line.origen.name"/></td>
+                              <td class="text-left"><span t-field="line.destino.name"/></td>
+                              <td class="text-right"><span t-field="line.monto"/></td>
+                          </tr>
+                      </t>
+                  </tbody>
+              </table>
+              
+            <div style="width:100%;border-bottom:thin solid black">
+                  <h3>Resumen de Efectivo</h3>
+              </div>
+                      <table  class="table table-sm o_main_table" name="resumen">
+                                      <thead>
+                                          <tr style="background:gray">
+                                          <td>Inicial</td>
+                                          <td>Ingresado</td>
+                                          <td>Egresado</td>
+                                          <td>Final</td>
+                                          <td>Diferencia</td>                                        
+                                          </tr>
+                                      </thead>
+                                      <tbody class="invoice_tbody">
+                                        <tr>
+                                          <td><span t-field="doc.efectivo_inicial"/></td>
+                                          <td><span t-field="doc.efectivo_ingresado"/></td>
+                                          <td><span t-field="doc.efectivo_egresado"/></td>
+                                          <td><span t-field="doc.efectivo_final"/></td>
+                                          <td><span t-field="doc.efectivo_diferencia"/></td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
+              
+              
+             
+          </div>
+      </t>
+       </t>
+       </t>
+     </template>
+  
+  
+  <!-- campo caja id en vista formulario de documentos fiscales-->
+  
+  <record id="odoosv_relacion_caja_tipo_documento_form" model="ir.ui.view">
+    <field name="name">odoosv_relacion_caja_tipo_documento_form</field>
+    <field name="model">odoosv.fiscal.document</field>
+    <field name="inherit_id" ref="sv_accounting.odoosv_fiscal_document_form" />
+    <field name="arch" type="xml">
+      <xpath expr="//field[@name='tipo_movimiento']" position="after">
+        <field name="caja_id" string='Caja Facturadora'/>
+      </xpath>
+    </field>
+  </record>
+
+  <!-- campo caja id en vista formulario de diarios-->
+  
+  <record id="odoosv_relacion_caja_diario_form" model="ir.ui.view">
+    <field name="name">odoosv_relacion_caja_diario_form</field>
+    <field name="model">account.journal</field>
+    <field name="inherit_id" ref="account.view_account_journal_form" />
+    <field name="arch" type="xml">
+      <xpath expr="//form[1]/sheet[1]/group[1]/group[1]/field[@name='type']" position="after">
+        <field name="caja_id"/>
+      </xpath>
+    </field>
+  </record>
+  
+
+  <record id="odoosv_papel_ticket" model="report.paperformat">
+    <field name="name">TICKET</field>
+    <field name="format">custom</field>
+    <field name="page_height">1000</field>
+    <field name="page_width">71</field>
+    <field name="orientation">Portrait</field>
+    <field name="margin_top">10</field>
+    <field name="margin_bottom">10</field>
+    <field name="margin_bottom">10</field>
+    <field name="margin_left">7</field>
+    <field name="margin_right">7</field>
+    <field name="header_spacing">30</field>
+    <field name="dpi">90</field>
+  </record>
+
+
+
+
+
+  <report
+    id="corte_x_report"
+    string="Corte X"
+    model="odoosv.cierre"
+    report_type="qweb-pdf"
+    file="sv_caja.template_x_report"
+    name="sv_caja.template_x_report"
+    
+    menu="True"/>
+    
+  
+  
+    <template id="template_x_report">
+      <t t-call="web.html_container">
+          <t t-foreach="docs" t-as="doc">
+  
+      <t t-call="web.basic_layout">
+          <div class="page">
+              <t t-raw="doc.caja_id.header"/>
+              <!--<div class="oe_structure"/>-->
+              <div class="row" style="border-bottom:thin solid #ffffff;margin-bottom:5px;">
+                <div class="col-12" style="border-right:thin solid #ffffff;margin-bottom:5px;">
+                  <h2>Corte X</h2>
+                </div>
+                <div class="col-12">
+                  <table style="text-align:left;width:100%">
+                    <tr>
+                      <td>
+                        <span>Fecha :</span>
+                        <strong><span class="m-0" t-field="doc.fecha_cierre" t-options="{'widget': 'date'}"/></strong><p/>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <span>Impresión :</span>
+                        <strong><span class="m-0" t-esc="datetime.datetime.today()" t-options="{'widget': 'date'}"/></strong><p/>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <span>caja :</span>
+                        <strong><span class="m-0" t-field="doc.caja_id" /></strong><p/>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+
+
+            <div style="width:100%;border-bottom:thin solid black">
+                <h3>Documentos</h3>
+            </div>
+            
+            <table class="table table-sm o_main_table" name="documentos">
+                <tbody class="invoice_tbody">
+                    <t t-set="encontrado" t-value="0"/>
+                    <t t-foreach="doc.documento_ids" t-as="d">                      
+                      <t t-if="d.name =='Ticket'">          
+                        <t t-set="encontrado" t-value="1"/>            
+                        <tr><td><span/>TICKET<span>:</span><span t-field="d.min_doc"></span><span>-</span><span t-field="d.max_doc"></span></td></tr>
+                        <tr><td><span>Gravado:</span><span t-esc="'%.2f'% d.gravado"/></td></tr>
+                        <tr><td><span>Excento:</span><span t-esc="'%.2f'% d.exento"/></td></tr>
+                        <tr><td><span>No Sujeto</span><span t-esc="'%.2f'% d.nosujeto"/></td></tr>
+                        <tr><td><span>Total:</span><span t-esc="'%.2f'% d.total"/></td></tr>
+                      </t>
+                    </t>
+                    <t t-if="encontrado==0">
+                        <tr><td><span/>TICKET<span>:</span><span>-</span></td></tr>
+                        <tr><td><span>Gravado:</span><span t-esc="0.00"/></td></tr>
+                        <tr><td><span>Excento:</span><span  t-esc="0.00"/></td></tr>
+                        <tr><td><span>No Sujeto</span><span  t-esc="0.00"/></td></tr>
+                        <tr><td><span>Total:</span><span  t-esc="0.00"/></td></tr>
+                    </t>
+
+                      <t t-set="encontrado" t-value="0"/>
+                     <t t-foreach="doc.documento_ids" t-as="d">
+                      <t t-if="d.name=='Factura'">      
+                       <t t-set="encontrado" t-value="1"/>                    
+                        <tr><td><span/>FACTURA<span>:</span><span t-field="d.min_doc"></span><span>-</span><span t-field="d.max_doc"></span></td></tr>
+                        <tr><td><span>Gravado:</span><span t-esc="'%.2f'% d.gravado"/></td></tr>
+                        <tr><td><span>Excento:</span><span t-esc="'%.2f'% d.exento"/></td></tr>
+                        <tr><td><span>No Sujeto</span><span t-esc="'%.2f'% d.nosujeto"/></td></tr>
+                        <tr><td><span>Total:</span><span t-esc="'%.2f'% d.total"/></td></tr>
+                      </t>
+                    </t>
+                    <t t-if="encontrado==0">
+                        <tr><td><span/>FACTURA<span>:</span><span>-</span></td></tr>
+                        <tr><td><span>Gravado:</span><span t-esc="0.00"/></td></tr>
+                        <tr><td><span>Excento:</span><span  t-esc="0.00"/></td></tr>
+                        <tr><td><span>No Sujeto</span><span  t-esc="0.00"/></td></tr>
+                        <tr><td><span>Total:</span><span  t-esc="0.00"/></td></tr>
+                    </t>
+
+                    <t t-set="encontrado" t-value="0"/>
+                     <t t-foreach="doc.documento_ids" t-as="d">
+                      <t t-if="d.name=='CCF'">       
+                       <t t-set="encontrado" t-value="1"/>                   
+                        <tr><td><span/>CCF<span>:</span><span t-field="d.min_doc"></span><span>-</span><span t-field="d.max_doc"></span></td></tr>
+                        <tr><td><span>Gravado:</span><span t-esc="'%.2f'% d.gravado"/></td></tr>
+                        <tr><td><span>Excento:</span><span t-esc="'%.2f'% d.exento"/></td></tr>
+                        <tr><td><span>No Sujeto</span><span t-esc="'%.2f'% d.nosujeto"/></td></tr>
+                        <tr><td><span>Total:</span><span t-esc="'%.2f'% d.total"/></td></tr>
+                      </t>
+                    </t>
+                     <t t-if="encontrado==0">
+                        <tr><td><span/>CCF<span>:</span><span>-</span></td></tr>
+                        <tr><td><span>Gravado:</span><span t-esc="0.00"/></td></tr>
+                        <tr><td><span>Excento:</span><span  t-esc="0.00"/></td></tr>
+                        <tr><td><span>No Sujeto</span><span  t-esc="0.00"/></td></tr>
+                        <tr><td><span>Total:</span><span  t-esc="0.00"/></td></tr>
+                    </t>
+                </tbody>
+            </table>
+               
+
+            <div  style="width:100%;border-bottom:thin solid black">
+              <h3>Formas de Pago</h3>
+            </div>
+  
+              <!-- Is there a discount on at least one line? -->
+  
+              <table class="table table-sm o_main_table">
+                  
+                  <tbody class="sale_tbody">
+                      <t t-foreach="doc.cierrepago_ids" t-as="line">
+                          <tr class="o_line_section" style="font-size:12px;color:#000000;">
+                              <td class="text-left"><span t-field="line.name"/>:<span t-field="line.monto"/></td>
+                          </tr>
+                      </t>
+                  </tbody>
+              </table>
+
+            <t t-raw="doc.caja_id.footer"/>
+              
+              
+              
+             
+          </div>
+      </t>
+       </t>
+       </t>
+     </template>
+
+
+
+
+    <report
+    id="corte_z_report"
+    string="Corte Z"
+    model="odoosv.cierre"
+    report_type="qweb-pdf"
+    file="sv_caja.template_z_report"
+    name="sv_caja.template_z_report"
+    
+    menu="True"/>
+    
+  
+  
+    <template id="template_z_report">
+      <t t-call="web.html_container">
+          <t t-foreach="docs" t-as="doc">
+  
+      <t t-call="web.basic_layout">
+          <t t-it="state=='Confirmado'">
+          <div class="page">
+              <t t-raw="doc.caja_id.header"/>
+              <!--<div class="oe_structure"/>-->
+              <div class="row" style="border-bottom:thin solid #ffffff;margin-bottom:5px;">
+                <div class="col-12" style="border-right:thin solid #ffffff;margin-bottom:5px;">
+                  <h2>Corte X</h2>
+                </div>
+                <div class="col-12">
+                  <table style="text-align:left;width:100%">
+                    <tr>
+                      <td>
+                        <span>Fecha :</span>
+                        <strong><span class="m-0" t-field="doc.fecha_cierre" t-options="{'widget': 'date'}"/></strong><p/>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <span>Impresión :</span>
+                        <strong><span class="m-0" t-esc="datetime.datetime.today()" t-options="{'widget': 'date'}"/></strong><p/>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <span>caja :</span>
+                        <strong><span class="m-0" t-field="doc.caja_id" /></strong><p/>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+
+
+            <div style="width:100%;border-bottom:thin solid black">
+                <h3>Documentos</h3>
+            </div>
+            
+            <table class="table table-sm o_main_table" name="documentos">
+                <tbody class="invoice_tbody">
+                    <t t-set="encontrado" t-value="0"/>
+                    <t t-foreach="doc.documento_ids" t-as="d">                      
+                      <t t-if="d.name =='Ticket'">          
+                        <t t-set="encontrado" t-value="1"/>            
+                        <tr><td><span/>TICKET<span>:</span><span t-field="d.min_doc"></span><span>-</span><span t-field="d.max_doc"></span></td></tr>
+                        <tr><td><span>Gravado:</span><span t-esc="'%.2f'% d.gravado"/></td></tr>
+                        <tr><td><span>Excento:</span><span t-esc="'%.2f'% d.exento"/></td></tr>
+                        <tr><td><span>No Sujeto</span><span t-esc="'%.2f'% d.nosujeto"/></td></tr>
+                        <tr><td><span>Total:</span><span t-esc="'%.2f'% d.total"/></td></tr>
+                      </t>
+                    </t>
+                    <t t-if="encontrado==0">
+                        <tr><td><span/>TICKET<span>:</span><span>-</span></td></tr>
+                        <tr><td><span>Gravado:</span><span t-esc="0.00"/></td></tr>
+                        <tr><td><span>Excento:</span><span  t-esc="0.00"/></td></tr>
+                        <tr><td><span>No Sujeto</span><span  t-esc="0.00"/></td></tr>
+                        <tr><td><span>Total:</span><span  t-esc="0.00"/></td></tr>
+                    </t>
+
+                      <t t-set="encontrado" t-value="0"/>
+                     <t t-foreach="doc.documento_ids" t-as="d">
+                      <t t-if="d.name=='Factura'">      
+                       <t t-set="encontrado" t-value="1"/>                    
+                        <tr><td><span/>FACTURA<span>:</span><span t-field="d.min_doc"></span><span>-</span><span t-field="d.max_doc"></span></td></tr>
+                        <tr><td><span>Gravado:</span><span t-esc="'%.2f'% d.gravado"/></td></tr>
+                        <tr><td><span>Excento:</span><span t-esc="'%.2f'% d.exento"/></td></tr>
+                        <tr><td><span>No Sujeto</span><span t-esc="'%.2f'% d.nosujeto"/></td></tr>
+                        <tr><td><span>Total:</span><span t-esc="'%.2f'% d.total"/></td></tr>
+                      </t>
+                    </t>
+                    <t t-if="encontrado==0">
+                        <tr><td><span/>FACTURA<span>:</span><span>-</span></td></tr>
+                        <tr><td><span>Gravado:</span><span t-esc="0.00"/></td></tr>
+                        <tr><td><span>Excento:</span><span  t-esc="0.00"/></td></tr>
+                        <tr><td><span>No Sujeto</span><span  t-esc="0.00"/></td></tr>
+                        <tr><td><span>Total:</span><span  t-esc="0.00"/></td></tr>
+                    </t>
+
+                    <t t-set="encontrado" t-value="0"/>
+                     <t t-foreach="doc.documento_ids" t-as="d">
+                      <t t-if="d.name=='CCF'">       
+                       <t t-set="encontrado" t-value="1"/>                   
+                        <tr><td><span/>CCF<span>:</span><span t-field="d.min_doc"></span><span>-</span><span t-field="d.max_doc"></span></td></tr>
+                        <tr><td><span>Gravado:</span><span t-esc="'%.2f'% d.gravado"/></td></tr>
+                        <tr><td><span>Excento:</span><span t-esc="'%.2f'% d.exento"/></td></tr>
+                        <tr><td><span>No Sujeto</span><span t-esc="'%.2f'% d.nosujeto"/></td></tr>
+                        <tr><td><span>Total:</span><span t-esc="'%.2f'% d.total"/></td></tr>
+                      </t>
+                    </t>
+                     <t t-if="encontrado==0">
+                        <tr><td><span/>CCF<span>:</span><span>-</span></td></tr>
+                        <tr><td><span>Gravado:</span><span t-esc="0.00"/></td></tr>
+                        <tr><td><span>Excento:</span><span  t-esc="0.00"/></td></tr>
+                        <tr><td><span>No Sujeto</span><span  t-esc="0.00"/></td></tr>
+                        <tr><td><span>Total:</span><span  t-esc="0.00"/></td></tr>
+                    </t>
+                </tbody>
+            </table>
+               
+
+            <div  style="width:100%;border-bottom:thin solid black">
+              <h3>Formas de Pago</h3>
+            </div>
+  
+              <!-- Is there a discount on at least one line? -->
+  
+              <table class="table table-sm o_main_table">
+                  
+                  <tbody class="sale_tbody">
+                      <t t-foreach="doc.cierrepago_ids" t-as="line">
+                          <tr class="o_line_section" style="font-size:12px;color:#000000;">
+                              <td class="text-left"><span t-field="line.name"/>:<span t-field="line.monto"/></td>
+                          </tr>
+                      </t>
+                  </tbody>
+              </table>
+
+            <t t-raw="doc.caja_id.footer"/>
+              
+              
+              
+             
+          </div>
+          </t>
+      </t>
+       </t>
+       </t>
+     </template>
+  
+    </data>
+  </odoo>
