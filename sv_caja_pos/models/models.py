@@ -119,7 +119,7 @@ class sucursales_cierre_pos(models.Model):
                         for d in record.cierrepago_ids:
                             if ppm.journal_id.id==d.journal_id.id:
                                 encontrado=True
-                                d.monto+=pg[total]
+                                d.monto+=pg['total']
                         if not encontrado:
                             self.env['odoosv.cierre.pago'].create({'name':j.name,'cierre_id':record.id,'journal_id':j.id,'monto':pg['total']})
                         
