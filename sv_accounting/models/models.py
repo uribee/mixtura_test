@@ -774,7 +774,7 @@ class odoosv_move(models.Model):
             if r.move_type in ('in_invoice','in_refund','out_invoice','out_refund'):
                 if r.state!='draft':
                     if not r.tipo_documento_id:
-                        raise ValidationError('Debe especificare un tipo de documento')
+                        r.write({'tipo_documento_id':1})#raise ValidationError('Debe especificare un tipo de documento')
                     else:
                         dic={}
                         dic['move']=r
