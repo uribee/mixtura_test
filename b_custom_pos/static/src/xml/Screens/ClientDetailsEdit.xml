@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+     <t t-name="ClientDetailsEditIdent" t-inherit="point_of_sale.ClientDetailsEdit" t-inherit-mode="extension" owl="1">
+         <!--<xpath expr="//div[@class='client-detail']" position="inside">-->
+         <xpath expr="//div[hasclass('client-details-left')]" position="inside">
+             <div class="client-detail">
+                 <span class="label">DUI:</span>
+                 <input class="detail client-dui" name="dui"
+                        t-on-change="captureChange" t-att-value="props.partner.dui || ''"
+                        placeholder="DUI"/>
+             </div>
+             <div class="client-detail">
+                 <span class="label">NIT</span>
+                 <input class="detail client-nit" name="nit"
+                        t-on-change="captureChange" t-att-value="props.partner.nit || ''"
+                        placeholder="NIT"/>
+             </div>
+             <div class="client-detail">
+                 <span class="label">NRC</span>
+                 <input class="detail client-nrc" name="nrc"
+                        t-on-change="captureChange" t-att-value="props.partner.nrc || ''"
+                        placeholder="NRC"/>
+             </div>
+         </xpath>
+
+
+         <xpath expr="//div[@class='client-details-right']" position="inside">
+             <div class="client-detail">
+                 <span class="label">Sitio Web</span>
+                 <input class="detail client-website" name="website"
+                        t-on-change="captureChange" t-att-value="props.partner.website || ''"
+                        placeholder="Sitio Web"/>
+             </div>
+             <div class="client-detail">
+                 <span class="label">Doc Extranjero</span>
+                 <input class="detail client-nitex" name="nitex"
+                        t-on-change="captureChange" t-att-value="props.partner.nitex || ''"
+                        placeholder="NIT Extranjero"/>
+             </div>
+
+         </xpath>
+
+     </t>
+</templates>

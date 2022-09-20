@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="b_custom_pos_res_partner_view_form_inherit" model="ir.ui.view">
+            <field name="name">res.partner.pos.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='vat']" position="after">
+                    <field name="dui" attrs="{'invisible':[('company_type','!=','person')],'required':[('company_type','=','person')]}"/>
+                    <field name="nit" required="1"/>
+                    <field name="nrc"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
